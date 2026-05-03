@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUTISMATH</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <h1 id="instrucao">Preencha 5 blocos</h1>
+
+    <div id="grid-simples"></div>
+
+    <div class="feedback-area">
+      <p id="msg-feedback"></p>
+    </div>
+
+    <div class="controles">
+      <button class="btn-check" onclick="validar()">
+        <span class="material-icons">check_circle</span> VERIFICAR
+      </button>
+
+      <div class="bento-botoes">
+        <button class="btn-secundario" onclick="limpar()">
+          <span class="material-icons">undo</span> Desfazer
+        </button>
+        <button class="btn-secundario btn-dica" onclick="ajuda()">
+          <span class="material-icons">lightbulb</span> Dica
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script src="./scripts/script.js"></script>
+</body>
+</html>

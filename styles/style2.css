@@ -1,0 +1,45 @@
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #eef3f5;
+}
+
+.controles button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #90caf9;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-template-rows: repeat(3, 80px);
+  gap: 10px;
+  justify-content: center;
+}
+
+.grid div {
+  width: 80px;
+  height: 80px;
+  background: #d9e3e8;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 30px;
+}
+
+#robo {
+  background: #4caf50;
+  color: white;
+}
+
+.alvo {
+  background: #ffd54f;
+}

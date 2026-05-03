@@ -1,0 +1,82 @@
+:root {
+    --verde-primario: #2D6A4F;
+    --verde-suave: #52B788;
+    --fundo: #F1F8E9;
+}
+
+body {
+    background-color: var(--fundo);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.app-container {
+    background: white;
+    padding: 30px;
+    border-radius: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    text-align: center;
+    width: 320px;
+}
+
+h1 { color: #1B4332; font-size: 1.3rem; margin-bottom: 25px; }
+
+#grid-simples {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.bloco {
+    aspect-ratio: 1;
+    background-color: #FFF;
+    border: 3px solid #E0E0E0;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.bloco.selecionado {
+    background-color: var(--verde-suave);
+    border-color: var(--verde-primario);
+}
+
+.controles { display: flex; flex-direction: column; gap: 12px; }
+
+.btn-check {
+    background-color: var(--verde-primario);
+    color: white;
+    border: none;
+    padding: 18px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.bento-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.btn-secundario {
+    background: #F8F9FA;
+    border: 2px solid #EEE;
+    border-radius: 15px;
+    padding: 12px;
+    color: #666;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+#msg-feedback { font-weight: bold; min-height: 25px; margin-bottom: 10px; }

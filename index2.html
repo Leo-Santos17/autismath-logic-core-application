@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Nível 8 - Robô</title>
+  <link rel="stylesheet" href="estilo2.css">
+</head>
+<body>
+
+<div id="fase8">
+
+  <h2>Leve o robô até a estrela ⭐</h2>
+
+  <div class="grid">
+    <div></div>
+    <div></div>
+    <div></div>
+
+    <div></div>
+    <div id="robo">🤖</div>
+    <div></div>
+
+    <div></div>
+    <div></div>
+    <div class="alvo">⭐</div>
+  </div>
+
+  <div class="controles">
+  <button onclick="addComando('cima')">⬆️</button>
+  <button onclick="addComando('baixo')">⬇️</button>
+  <button onclick="addComando('esquerda')">⬅️</button>
+  <button onclick="addComando('direita')">➡️</button>
+  <br>
+  <button onclick="executar()">Executar</button>
+  <button onclick="limpar()">Limpar</button>
+  </div>
+
+  <div id="sequencia"></div>
+  <p id="feedback"></p>
+
+</div>
+
+<script src="script2.js"></script>
+</body>
+</html>
