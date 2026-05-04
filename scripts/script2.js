@@ -6,12 +6,75 @@ const fases = {
     alvo: 8,
     obstaculos: []
   },
+
   2: {
-    colunas: 2,
+    colunas: 3,
+    linhas: 3,
+    inicio: 0,
+    alvo: 2,
+    obstaculos: []
+  },
+
+  3: {
+    colunas: 3,
+    linhas: 3,
+    inicio: 6,
+    alvo: 0,
+    obstaculos: []
+  },
+
+  4: {
+    colunas: 4,
     linhas: 4,
-    inicio: 2,
-    alvo: 1,
-    obstaculos: [4, 7]
+    inicio: 5,
+    alvo: 10,
+    obstaculos: [6]
+  },
+
+  5: {
+    colunas: 4,
+    linhas: 4,
+    inicio: 0,
+    alvo: 15,
+    obstaculos: [5, 6]
+  },
+  6: {
+    colunas: 4,
+    linhas: 4,
+    inicio: 3,
+    alvo: 12,
+    obstaculos: [6, 9]
+  },
+
+  7: {
+    colunas: 5,
+    linhas: 5,
+    inicio: 12,
+    alvo: 0,
+    obstaculos: [7, 11, 13]
+  },
+  8: {
+    colunas: 5,
+    linhas: 5,
+    inicio: 4,
+    alvo: 20,
+    obstaculos: [8, 9, 14]
+  },
+
+  9: {
+    colunas: 5,
+    linhas: 5,
+    inicio: 6,
+    alvo: 18,
+    obstaculos: [7, 8, 13, 14]
+  },
+
+  10: {
+    colunas: 6,
+    linhas: 6,
+    inicio: 0,
+    alvo: 35,
+    obstaculos: [1, 2, 3, 4, 10, 16, 22, 28]
   }
 };
 
