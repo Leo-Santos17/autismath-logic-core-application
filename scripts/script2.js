@@ -42,19 +42,21 @@ function mover(cmd) {
   // se não mudou, ignora (bateu na parede)
   if (novaPos === pos) return;
 
-  const grid = document.querySelector(".grid");
-  const celulas = grid.children;
-
-  // limpa posição antiga
-  celulas[pos].innerHTML = "";
-
-  // cria novo robô
-  const robo = document.createElement("div");
-  robo.innerText = "🤖";
-
-  celulas[novaPos].appendChild(robo);
-
   pos = novaPos;
+  const robo = document.getElementById("robo");
+
+  // calcular grade: 80px + 10px gap = 90px
+  const x = (pos % 3) * 90;
+  const y = Math.floor(pos / 3) * 90;
+
+  // aplicar posição
+  robo.style.left = x + "px";
+  robo.style.top = y + "px";
+
+  // dar o pulo
+  robo.classList.remove("animar-pulo");
+  void robo.offsetWidth; // truque para reiniciar animação
+  robo.classList.add("animar-pulo");
 
   // condição de vitória
   if (pos === 8) {
@@ -64,5 +66,13 @@ function mover(cmd) {
 
 function limpar() {
   comandos = [];
+  pos = 4; // volta para o centro
   atualizarSequencia();
+
+  const robo = document.getElementById("robo");
+  robo.style.left = "90px";
+  robo.style.top = "90px";
+  robo.classList.remove("animar-pulo");
+
+  document.getElementById("feedback").innerText = "";
 }

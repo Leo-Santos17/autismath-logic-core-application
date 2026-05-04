@@ -1,3 +1,13 @@
+@keyframes pulo-arco {
+  50% {
+    transform: scale(1.2) translateY(-30px);
+  }
+}
+
+.animar-pulo {
+  animation: pulo-arco 0.4s ease-in-out;
+}
+
 body {
   font-family: Arial;
   text-align: center;
@@ -20,6 +30,9 @@ body {
   grid-template-rows: repeat(3, 80px);
   gap: 10px;
   justify-content: center;
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .grid div {
@@ -36,8 +49,22 @@ body {
 }
 
 #robo {
+  position: absolute;
+  width: 80px;
+  height: 80px;
   background: #4caf50;
-  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+
+  /* suavizar movimento */
+  transition: all 0.4s ease-in-out;
+  left: 90px;
+  /* posição inicial (centro) */
+  top: 90px;
+  z-index: 10;
 }
 
 .alvo {
