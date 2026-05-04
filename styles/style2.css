@@ -24,6 +24,11 @@ body {
   cursor: pointer;
 }
 
+button:disabled {
+  background-color: #c5c8ca;
+  cursor: not-allowed;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 80px);
@@ -69,4 +74,9 @@ body {
 
 .alvo {
   background: #ffd54f;
+}
+
+.obstaculo {
+  background: #cfd8dc !important;
+  opacity: 0.8;
 }
