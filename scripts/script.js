@@ -12,6 +12,18 @@ const instrucao = document.getElementById("instrucao");
 const feedback = document.getElementById("msg-feedback");
 const btnCheck = document.querySelector(".btn-check");
 
+function registrarEvento(tipo, fase, status, detalhe) {
+    const dados = JSON.parse(localStorage.getItem('autismath_stats') || '[]');
+    dados.push({
+        tipo: tipo,
+        fase: fase,
+        status: status,
+        detalhe: detalhe,
+        data: new Date().toLocaleString()
+    });
+    localStorage.setItem('autismath_stats', JSON.stringify(dados));
+}
+
 function iniciarExercicio() {
     grid.innerHTML = ""; 
     const item = exercicios[indiceAtual];
@@ -35,9 +47,10 @@ function validar() {
     const correta = exercicios[indiceAtual].resposta;
 
     if (selecionados === correta) {
-        feedback.style.color = "var(--verde-primario)";
+        feedback.style.color = "#4CAF50";
         feedback.innerText = "🌟 Parabéns! Você acertou!";
         
+        registrarEvento('Matemática', indiceAtual + 1, 'Acerto', `Respondeu ${correta} corretamente`);
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
         setTimeout(() => {
@@ -52,17 +65,28 @@ function validar() {
     } else {
         feedback.style.color = "#D32F2F";
         feedback.innerText = "Tente contar novamente.";
+        registrarEvento('Matemática', indiceAtual + 1, 'Erro', `Selecionou ${selecionados} em vez de ${correta}`);
     }
 }
 
 function telaFinal() {
     instrucao.innerText = "🏆 Excelente Trabalho!";
     grid.innerHTML = "";
-    feedback.innerText = "Você concluiu todos os desafios!";
+    feedback.innerText = "Você concluiu todos os desafios de Matemática!";
     
-    // Transforma o botão principal em Reiniciar
-    btnCheck.innerHTML = '<span class="material-icons">refresh</span> REINICIAR';
-    btnCheck.onclick = reiniciar;
+    // Transforma o botão principal em Próxima Etapa (Lógica)
+    btnCheck.innerHTML = '<span class="material-icons">psychology</span> IR PARA LÓGICA';
+    btnCheck.onclick = () => {
+        window.location.href = 'index2.html';
+    };
+
+    // Adiciona botão de ver resultados
+    const btnResult = document.createElement("button");
+    btnResult.className = "btn-secundario";
+    btnResult.style.marginTop = "10px";
+    btnResult.innerHTML = '<span class="material-icons">bar_chart</span> VER RESULTADOS';
+    btnResult.onclick = () => window.location.href = 'resul.html';
+    grid.appendChild(btnResult);
 }
 
 function reiniciar() {

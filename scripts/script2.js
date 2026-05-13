@@ -162,32 +162,56 @@ function executar() {
   });
 }
 
+function registrarEvento(tipo, fase, status, detalhe) {
+  const dados = JSON.parse(localStorage.getItem('autismath_stats') || '[]');
+  dados.push({
+    tipo: tipo,
+    fase: fase,
+    status: status,
+    detalhe: detalhe,
+    data: new Date().toLocaleString()
+  });
+  localStorage.setItem('autismath_stats', JSON.stringify(dados));
+}
+
 function mover(cmd) {
   const config = fases[faseAtual];
   let novaPos = pos;
+  let bateu = false;
 
-  if (cmd === "direita" && pos % config.colunas !== config.colunas - 1) {
-    novaPos = pos + 1;
+  if (cmd === "direita") {
+    if (pos % config.colunas !== config.colunas - 1) novaPos = pos + 1;
+    else bateu = true;
   }
-  if (cmd === "esquerda" && pos % config.colunas !== 0) {
-    novaPos = pos - 1;
+  if (cmd === "esquerda") {
+    if (pos % config.colunas !== 0) novaPos = pos - 1;
+    else bateu = true;
   }
-  if (cmd === "baixo" && pos + config.colunas < config.colunas * config.linhas) {
-    novaPos = pos + config.colunas;
+  if (cmd === "baixo") {
+    if (pos + config.colunas < config.colunas * config.linhas) novaPos = pos + config.colunas;
+    else bateu = true;
   }
-  if (cmd === "cima" && pos - config.colunas >= 0) {
-    novaPos = pos - config.colunas;
+  if (cmd === "cima") {
+    if (pos - config.colunas >= 0) novaPos = pos - config.colunas;
+    else bateu = true;
+  }
+
+  if (bateu) {
+    registrarEvento('Lógica', faseAtual, 'Erro', 'Bateu na parede: ' + cmd);
+    return;
   }
 
   // Bloquear se for obstáculo
-  if (config.obstaculos.includes(novaPos)) return;
+  if (config.obstaculos.includes(novaPos)) {
+    registrarEvento('Lógica', faseAtual, 'Erro', 'Bateu em obstáculo na pos ' + novaPos);
+    return;
+  }
 
   if (novaPos === pos) return;
 
   pos = novaPos;
   atualizarPosicaoRobo();
 
-  // Efeito de pulo
   const robo = document.getElementById("robo");
   robo.classList.remove("animar-pulo");
   void robo.offsetWidth;
@@ -195,7 +219,21 @@ function mover(cmd) {
 
   if (pos === config.alvo) {
     document.getElementById("feedback").innerText = "🎉 Missão completa!";
-    document.getElementById("proximaFase").disabled = false;
+    registrarEvento('Lógica', faseAtual, 'Acerto', 'Chegou na estrela');
+    
+    if (fases[faseAtual + 1]) {
+        document.getElementById("proximaFase").disabled = false;
+    } else {
+        // ÚLTIMA FASE
+        setTimeout(() => {
+            const escolha = confirm("Parabéns! Você terminou a Lógica. \n\nOK = Ir para Matemática 🔢\nCancel = Ver Resultados 📊");
+            if (escolha) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'resul.html';
+            }
+        }, 1000);
+    }
   }
 }
 
@@ -204,6 +242,8 @@ function limpar() {
 }
 
 function proximaFase() {
-  carregarFase(faseAtual + 1);
-  document.getElementById("proximaFase").disabled = true;
+  if (fases[faseAtual + 1]) {
+    carregarFase(faseAtual + 1);
+    document.getElementById("proximaFase").disabled = true;
+  }
 }
