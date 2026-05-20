@@ -17,6 +17,7 @@ let pos = 4;
 let executando = false;
 
 window.onload = () => carregarFase(faseAtual);
+window.onresize = () => atualizarPosicaoRobo(true);
 
 function tocarSom(nome) {
   const audio = new Audio(`audios/${nome.toLowerCase()}.mp3`);
@@ -32,18 +33,19 @@ function carregarFase(id) {
   comandos = [];
   executando = false;
   atualizarSequencia();
+  atualizarFooter();
   document.getElementById("feedback").innerText = "";
   document.getElementById("modal-parabens").style.display = "none";
 
   const grid = document.querySelector(".grid");
   grid.innerHTML = "";
-  grid.style.gridTemplateColumns = `repeat(${config.colunas}, 80px)`;
-  grid.style.gridTemplateRows = `repeat(${config.linhas}, 80px)`;
+  grid.style.gridTemplateColumns = `repeat(${config.colunas}, var(--cell-size))`;
+  grid.style.gridTemplateRows = `repeat(${config.linhas}, var(--cell-size))`;
 
   for (let i = 0; i < config.colunas * config.linhas; i++) {
     const div = document.createElement("div");
     if (i === config.alvo) { div.classList.add("alvo"); div.innerText = "⭐"; }
-    if (config.obstaculos.includes(i)) { div.classList.add("obstaculo"); div.innerText = "🚧"; }
+    if (config.obstaculos.includes(i)) { div.classList.add("obstaculo"); div.innerText = "🪨"; }
     grid.appendChild(div);
   }
 
@@ -51,19 +53,46 @@ function carregarFase(id) {
   robo.id = "robo";
   robo.innerText = "🤖";
   grid.appendChild(robo);
-  atualizarPosicaoRobo(true);
+
+  // Esperar o render inicial para posicionar perfeitamente
+  setTimeout(() => atualizarPosicaoRobo(true), 50);
+}
+
+function atualizarFooter() {
+  const progresso = document.getElementById("fase-progresso");
+  if (!progresso) return;
+  
+  let html = `<span class="material-icons estrela-preenchida">star</span>`;
+  html += `<span id="fase-texto">Fase ${faseAtual}</span>`;
+  
+  // Apenas efeito estético: adicionar 2 estrelas vazias para mostrar que há mais caminho
+  html += `<span class="material-icons estrela-vazia">star_border</span>`;
+  html += `<span class="material-icons estrela-vazia">star_border</span>`;
+  
+  progresso.innerHTML = html;
 }
 
 function atualizarPosicaoRobo(imediato = false) {
-  const config = fases[faseAtual];
   const robo = document.getElementById("robo");
   if (!robo) return;
-  const x = (pos % config.colunas) * 90;
-  const y = Math.floor(pos / config.colunas) * 90;
+
+  const grid = document.querySelector(".grid");
+  const cells = grid.querySelectorAll("div:not(#robo)");
+  const targetCell = cells[pos];
+  if (!targetCell) return;
+
+  const x = targetCell.offsetLeft;
+  const y = targetCell.offsetTop;
+
   if (imediato) robo.style.transition = "none";
   robo.style.left = x + "px";
   robo.style.top = y + "px";
-  if (imediato) setTimeout(() => robo.style.transition = "all 0.4s ease-in-out", 50);
+
+  if (imediato) {
+    setTimeout(() => {
+      robo.style.transition = "all 0.4s ease-in-out";
+    }, 50);
+  }
 }
 
 function addComando(cmd) {
@@ -72,35 +101,39 @@ function addComando(cmd) {
   atualizarSequencia();
 }
 
-function atualizarSequencia() {
-  document.getElementById("sequencia").innerText = comandos.join(" → ");
-}
-
-function executar() {
+function desfazer() {
   if (executando || comandos.length === 0) return;
-  executando = true;
+  comandos.pop();
+  atualizarSequencia();
+}
+
+function atualizarSequencia() {
+  const container = document.getElementById("sequencia-slots");
+  if (!container) return;
   
-  let i = 0;
-  const intervalo = setInterval(() => {
-    if (i >= comandos.length || !executando) {
-      clearInterval(intervalo);
-      executando = false;
-      return;
+  container.innerHTML = "";
+  
+  // Garantir pelo menos 5 caixas na tela, ou mais se a pessoa adicionar mais de 5 comandos
+  const totalSlots = Math.max(5, comandos.length + 1);
+  
+  for (let i = 0; i < totalSlots; i++) {
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    
+    if (i < comandos.length) {
+      const cmd = comandos[i];
+      slot.classList.add("preenchido", `cmd-${cmd}`);
+      if (cmd === "cima") slot.innerText = "⬆️";
+      if (cmd === "baixo") slot.innerText = "⬇️";
+      if (cmd === "esquerda") slot.innerText = "⬅️";
+      if (cmd === "direita") slot.innerText = "➡️";
     }
-    const cmd = comandos[i];
-    tocarSom(cmd); // Grita "cima", "baixo"...
-    mover(cmd);
-    i++;
-  }, 1000);
+    
+    container.appendChild(slot);
+  }
 }
 
-function registrarEvento(tipo, fase, status, detalhe) {
-  const dados = JSON.parse(localStorage.getItem('autismath_stats') || '[]');
-  dados.push({ tipo, fase, status, detalhe, data: new Date().toLocaleString() });
-  localStorage.setItem('autismath_stats', JSON.stringify(dados));
-}
-
-function mover(cmd) {
+function preverBatida(cmd) {
   const config = fases[faseAtual];
   let novaPos = pos;
   let bateu = false;
@@ -119,33 +152,82 @@ function mover(cmd) {
     else bateu = true;
   }
 
-  const robo = document.getElementById("robo");
+  return bateu || config.obstaculos.includes(novaPos);
+}
 
-  if (bateu || config.obstaculos.includes(novaPos)) {
-    // ERRO - TREMER E RESETAR (ABA)
-    executando = false;
-    robo.classList.add("tremer");
-    tocarSom("erro"); // Som de batida
-    registrarEvento('Lógica', faseAtual, 'Erro', bateu ? 'Parede' : 'Obstáculo');
+function executar() {
+  if (executando || comandos.length === 0) return;
+  executando = true;
+  
+  let i = 0;
+  const intervalo = setInterval(() => {
+    if (!executando) { clearInterval(intervalo); return; }
+
+    const cmd = comandos[i];
     
-    setTimeout(() => {
-      robo.classList.remove("tremer");
-      tocarSom("tente_novamente");
-      limpar(); // Reseta tudo
-    }, 500);
-    return;
-  }
+    if (preverBatida(cmd)) {
+      clearInterval(intervalo);
+      const robo = document.getElementById("robo");
+      robo.classList.add("tremer");
+      tocarSom("erro");
+      registrarEvento('Lógica', faseAtual, 'Erro', 'Batida detectada');
+      
+      setTimeout(() => {
+        robo.classList.remove("tremer");
+        tocarSom("tente_novamente");
+        limpar();
+        executando = false;
+      }, 800);
+      return;
+    }
+
+    tocarSom(cmd);
+    mover(cmd);
+    i++;
+
+    if (i >= comandos.length) {
+      clearInterval(intervalo);
+      setTimeout(() => {
+        if (pos !== fases[faseAtual].alvo && executando) {
+          tocarSom("tente_novamente");
+          limpar();
+        }
+        executando = false;
+      }, 1200);
+    }
+  }, 1000);
+}
+
+function registrarEvento(tipo, fase, status, detalhe) {
+  const dados = JSON.parse(localStorage.getItem('autismath_stats') || '[]');
+  dados.push({ tipo, fase, status, detalhe, data: new Date().toLocaleString() });
+  localStorage.setItem('autismath_stats', JSON.stringify(dados));
+}
+
+function mover(cmd) {
+  const config = fases[faseAtual];
+  let novaPos = pos;
+
+  if (cmd === "direita") novaPos = pos + 1;
+  else if (cmd === "esquerda") novaPos = pos - 1;
+  else if (cmd === "baixo") novaPos = pos + config.colunas;
+  else if (cmd === "cima") novaPos = pos - config.colunas;
 
   pos = novaPos;
   atualizarPosicaoRobo();
+
+  const robo = document.getElementById("robo");
   robo.classList.remove("animar-pulo");
   void robo.offsetWidth;
   robo.classList.add("animar-pulo");
 
   if (pos === config.alvo) {
-    executando = false;
-    registrarEvento('Lógica', faseAtual, 'Acerto', 'Estrela');
-    mostrarVitoria();
+    setTimeout(() => {
+      if (pos === config.alvo) {
+        registrarEvento('Lógica', faseAtual, 'Acerto', 'Estrela');
+        mostrarVitoria();
+      }
+    }, 800);
   }
 }
 
@@ -153,17 +235,15 @@ function mostrarVitoria() {
   tocarSom("parabens");
   document.getElementById("modal-parabens").style.display = "block";
   
-  // Balões da vitória
   for (let i = 0; i < 15; i++) {
     setTimeout(criarBalao, i * 300);
   }
 
   if (!fases[faseAtual + 1]) {
-    // FINAL DE TUDO
     setTimeout(() => {
       document.querySelector("#modal-parabens h2").innerText = "🏆 CAMPEÃO! 🏆";
       tocarSom("vitoria_final");
-    }, 2000);
+    }, 1500);
   }
 }
 
@@ -173,20 +253,20 @@ function criarBalao() {
   balao.style.left = Math.random() * 90 + "vw";
   balao.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
   
-  balao.onclick = () => estourar(balao);
+  balao.onclick = () => {
+    balao.classList.add("estouro");
+    tocarSom("estouro");
+    setTimeout(() => balao.remove(), 200);
+  };
   
-  // Estouro automático em 7 segundos
   setTimeout(() => {
-    if (balao.parentElement) estourar(balao);
+    if (balao.parentElement) {
+      balao.style.opacity = "0";
+      setTimeout(() => balao.remove(), 1000);
+    }
   }, 7000);
 
   document.body.appendChild(balao);
-}
-
-function estourar(balao) {
-  balao.classList.add("estouro");
-  tocarSom("estouro");
-  setTimeout(() => balao.remove(), 200);
 }
 
 function limpar() {
