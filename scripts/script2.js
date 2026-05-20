@@ -1,14 +1,14 @@
 const fases = {
-  1: { colunas: 3, linhas: 3, inicio: 4, alvo: 8, obstaculos: [] },
-  2: { colunas: 3, linhas: 3, inicio: 0, alvo: 2, obstaculos: [] },
-  3: { colunas: 3, linhas: 3, inicio: 6, alvo: 0, obstaculos: [] },
-  4: { colunas: 4, linhas: 4, inicio: 5, alvo: 10, obstaculos: [6] },
-  5: { colunas: 4, linhas: 4, inicio: 0, alvo: 15, obstaculos: [5, 6] },
-  6: { colunas: 4, linhas: 4, inicio: 3, alvo: 12, obstaculos: [6, 9] },
-  7: { colunas: 5, linhas: 5, inicio: 12, alvo: 0, obstaculos: [7, 11, 13] },
-  8: { colunas: 5, linhas: 5, inicio: 4, alvo: 20, obstaculos: [8, 9, 14] },
-  9: { colunas: 5, linhas: 5, inicio: 6, alvo: 18, obstaculos: [7, 8, 13, 14] },
-  10: { colunas: 6, linhas: 6, inicio: 0, alvo: 35, obstaculos: [1, 2, 3, 4, 10, 16, 22, 28] }
+  1: { colunas: 3, linhas: 3, inicio: 4, alvo: 8, obstaculos: [] }
+  //2: { colunas: 3, linhas: 3, inicio: 0, alvo: 2, obstaculos: [] },
+  //3: { colunas: 3, linhas: 3, inicio: 6, alvo: 0, obstaculos: [] },
+  //4: { colunas: 4, linhas: 4, inicio: 5, alvo: 10, obstaculos: [6] },
+  //5: { colunas: 4, linhas: 4, inicio: 0, alvo: 15, obstaculos: [5, 6] },
+  //6: { colunas: 4, linhas: 4, inicio: 3, alvo: 12, obstaculos: [6, 9] },
+  //7: { colunas: 5, linhas: 5, inicio: 12, alvo: 0, obstaculos: [7, 11, 13] },
+  //8: { colunas: 5, linhas: 5, inicio: 4, alvo: 20, obstaculos: [8, 9, 14] },
+  //9: { colunas: 5, linhas: 5, inicio: 6, alvo: 18, obstaculos: [7, 8, 13, 14] },
+  //10: { colunas: 6, linhas: 6, inicio: 0, alvo: 35, obstaculos: [1, 2, 3, 4, 10, 16, 22, 28] }
 };
 
 let faseAtual = 1;
@@ -61,14 +61,14 @@ function carregarFase(id) {
 function atualizarFooter() {
   const progresso = document.getElementById("fase-progresso");
   if (!progresso) return;
-  
+
   let html = `<span class="material-icons estrela-preenchida">star</span>`;
   html += `<span id="fase-texto">Fase ${faseAtual}</span>`;
-  
+
   // Apenas efeito estético: adicionar 2 estrelas vazias para mostrar que há mais caminho
   html += `<span class="material-icons estrela-vazia">star_border</span>`;
   html += `<span class="material-icons estrela-vazia">star_border</span>`;
-  
+
   progresso.innerHTML = html;
 }
 
@@ -110,16 +110,16 @@ function desfazer() {
 function atualizarSequencia() {
   const container = document.getElementById("sequencia-slots");
   if (!container) return;
-  
+
   container.innerHTML = "";
-  
+
   // Garantir pelo menos 5 caixas na tela, ou mais se a pessoa adicionar mais de 5 comandos
   const totalSlots = Math.max(5, comandos.length + 1);
-  
+
   for (let i = 0; i < totalSlots; i++) {
     const slot = document.createElement("div");
     slot.className = "slot";
-    
+
     if (i < comandos.length) {
       const cmd = comandos[i];
       slot.classList.add("preenchido", `cmd-${cmd}`);
@@ -128,7 +128,7 @@ function atualizarSequencia() {
       if (cmd === "esquerda") slot.innerText = "⬅️";
       if (cmd === "direita") slot.innerText = "➡️";
     }
-    
+
     container.appendChild(slot);
   }
 }
@@ -158,20 +158,20 @@ function preverBatida(cmd) {
 function executar() {
   if (executando || comandos.length === 0) return;
   executando = true;
-  
+
   let i = 0;
   const intervalo = setInterval(() => {
     if (!executando) { clearInterval(intervalo); return; }
 
     const cmd = comandos[i];
-    
+
     if (preverBatida(cmd)) {
       clearInterval(intervalo);
       const robo = document.getElementById("robo");
       robo.classList.add("tremer");
       tocarSom("erro");
       registrarEvento('Lógica', faseAtual, 'Erro', 'Batida detectada');
-      
+
       setTimeout(() => {
         robo.classList.remove("tremer");
         tocarSom("tente_novamente");
@@ -232,18 +232,24 @@ function mover(cmd) {
 }
 
 function mostrarVitoria() {
-  tocarSom("parabens");
-  document.getElementById("modal-parabens").style.display = "block";
-  
-  for (let i = 0; i < 15; i++) {
-    setTimeout(criarBalao, i * 300);
-  }
+  const modal = document.getElementById("modal-parabens");
+  const titulo = modal.querySelector("h2");
+  const botao = modal.querySelector("button");
 
   if (!fases[faseAtual + 1]) {
-    setTimeout(() => {
-      document.querySelector("#modal-parabens h2").innerText = "🏆 CAMPEÃO! 🏆";
-      tocarSom("vitoria_final");
-    }, 1500);
+    tocarSom("vitoria_final");
+    titulo.innerText = "🏆 CAMPEÃO! 🏆";
+    botao.innerText = "REINICIAR 🔄";
+  } else {
+    tocarSom("parabens");
+    titulo.innerText = "🌟 PARABÉNS! 🌟";
+    botao.innerText = "PRÓXIMA FASE ➡️";
+  }
+
+  modal.style.display = "block";
+
+  for (let i = 0; i < 15; i++) {
+    setTimeout(criarBalao, i * 300);
   }
 }
 
@@ -252,13 +258,13 @@ function criarBalao() {
   balao.className = "balao";
   balao.style.left = Math.random() * 90 + "vw";
   balao.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
-  
+
   balao.onclick = () => {
     balao.classList.add("estouro");
     tocarSom("estouro");
     setTimeout(() => balao.remove(), 200);
   };
-  
+
   setTimeout(() => {
     if (balao.parentElement) {
       balao.style.opacity = "0";
@@ -277,6 +283,6 @@ function proximaFase() {
   if (fases[faseAtual + 1]) {
     carregarFase(faseAtual + 1);
   } else {
-    window.location.href = 'resul.html';
+    carregarFase(1);
   }
 }
