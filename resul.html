@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados - Autismath</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #eef3f5; padding: 20px; }
+        .box { background: white; padding: 20px; border-radius: 15px; max-width: 600px; margin: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #1a237e; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; }
+        th { background: #90caf9; }
+        .acerto { color: green; font-weight: bold; }
+        .erro { color: red; font-weight: bold; }
+        button { margin-top: 20px; padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>📊 Relatório de Desempenho</h1>
+        <div id="conteudo">
+            <p>Carregando dados da pedra...</p>
+        </div>
+        <button onclick="limparDados()">🗑️ Limpar para Novo Aluno</button>
+        <br><br>
+        <a href="index2.html">⬅️ Voltar ao Início</a>
+    </div>
+
+    <script>
+        function carregarResultados() {
+            const dados = JSON.parse(localStorage.getItem('autismath_stats') || '[]');
+            const div = document.getElementById('conteudo');
+            
+            if (dados.length === 0) {
+                div.innerHTML = "<p>Nenhum dado encontrado.</p>";
+                return;
+            }
+
+            let html = "<table><tr><th>Tipo</th><th>Fase</th><th>Status</th><th>Detalhe</th></tr>";
+            
+            let acertos = 0;
+            let erros = 0;
+
+            dados.forEach(item => {
+                const classe = item.status === 'Acerto' ? 'acerto' : 'erro';
+                if (item.status === 'Acerto') acertos++; else erros++;
+                
+                html += `<tr>
+                    <td>${item.tipo}</td>
+                    <td>${item.fase}</td>
+                    <td class="${classe}">${item.status}</td>
+                    <td>${item.detalhe}</td>
+                </tr>`;
+            });
+
+            html += "</table>";
+            html += `<p><b>Total Acertos:</b> ${acertos} | <b>Total Erros:</b> ${erros}</p>`;
+            div.innerHTML = html;
+        }
+
+        function limparDados() {
+            if (confirm("Apagar todos os dados para novo aluno?")) {
+                localStorage.removeItem('autismath_stats');
+                location.reload();
+            }
+        }
+
+        carregarResultados();
+    </script>
+</body>
+</html>

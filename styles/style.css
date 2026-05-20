@@ -10,20 +10,49 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .app-container {
     background: white;
-    padding: 30px;
+    padding: 20px;
     border-radius: 30px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     text-align: center;
-    width: 320px;
+    width: 100%;
+    max-width: 340px;
+    box-sizing: border-box;
 }
 
-h1 { color: #1B4332; font-size: 1.3rem; margin-bottom: 25px; }
+@media (max-height: 500px) {
+    .app-container {
+        padding: 12px;
+        border-radius: 20px;
+    }
+    h1 {
+        font-size: 1.1rem !important;
+        margin-bottom: 12px !important;
+    }
+    #grid-simples {
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+    }
+    .btn-check {
+        padding: 12px !important;
+        font-size: 1rem !important;
+    }
+}
+
+h1 { 
+    color: #1B4332; 
+    font-size: 1.3rem; 
+    margin-top: 5px;
+    margin-bottom: 25px; 
+}
 
 #grid-simples {
     display: grid;
@@ -80,3 +109,47 @@ h1 { color: #1B4332; font-size: 1.3rem; margin-bottom: 25px; }
 }
 
 #msg-feedback { font-weight: bold; min-height: 25px; margin-bottom: 10px; }
+
+/* Aviso de Orientação - Celular em Pé */
+#aviso-orientacao {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #1a237e;
+  color: white;
+  z-index: 99999;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#aviso-orientacao .icone {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: girar 2s infinite ease-in-out;
+}
+
+#aviso-orientacao h2 {
+  font-size: 28px;
+  margin: 10px 0;
+}
+
+#aviso-orientacao p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+@keyframes girar {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-90deg); }
+}
+
+@media (max-aspect-ratio: 1/1) {
+  #aviso-orientacao {
+    display: flex !important;
+  }
+}

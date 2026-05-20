@@ -1,45 +1,115 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
-  <title>Nível 8 - Robô</title>
-  <link rel="stylesheet" href="estilo2.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nível - Robô</title>
+  
+  <!-- Fontes e Ícones -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles/style2.css">
 </head>
+
 <body>
 
-<div id="fase8">
-
-  <h2>Leve o robô até a estrela ⭐</h2>
-
-  <div class="grid">
-    <div></div>
-    <div></div>
-    <div></div>
-
-    <div></div>
-    <div id="robo">🤖</div>
-    <div></div>
-
-    <div></div>
-    <div></div>
-    <div class="alvo">⭐</div>
+  <!-- Aviso de Orientação -->
+  <div id="aviso-orientacao">
+    <div class="icone">🔄</div>
+    <h2>Vire o dispositivo deitado</h2>
+    <p>Por favor, use a tela na horizontal (paisagem).</p>
   </div>
 
-  <div class="controles">
-  <button onclick="addComando('cima')">⬆️</button>
-  <button onclick="addComando('baixo')">⬇️</button>
-  <button onclick="addComando('esquerda')">⬅️</button>
-  <button onclick="addComando('direita')">➡️</button>
-  <br>
-  <button onclick="executar()">Executar</button>
-  <button onclick="limpar()">Limpar</button>
+  <div class="app-wrapper">
+    
+    <!-- Cabeçalho -->
+    <header class="app-header">
+      <button class="btn-icon btn-home" onclick="window.location.href='index.html'">
+        <span class="material-icons">home</span>
+      </button>
+      <div class="title-container">
+        <h1>Leve o robô até a estrela!</h1>
+      </div>
+      <button class="btn-icon btn-sound" onclick="alert('Som ativado/desativado')">
+        <span class="material-icons">volume_up</span>
+      </button>
+    </header>
+
+    <!-- Corpo Principal -->
+    <main class="main-content game-container">
+      
+      <!-- Tabuleiro Esquerda -->
+      <div class="left-panel">
+        <div class="grid">
+          <!-- Gerado pelo JavaScript -->
+        </div>
+      </div>
+
+      <!-- Painel Lateral Direita -->
+      <div class="right-panel">
+        
+        <!-- Área de Sequência -->
+        <div class="panel-section section-sequencia">
+          <h3>1. Monte sua sequência</h3>
+          <div id="sequencia-slots" class="slots-container">
+            <!-- Slots vazios gerados por JS -->
+          </div>
+        </div>
+
+        <!-- Área de Comandos -->
+        <div class="panel-section section-comandos">
+          <h3>2. Comandos</h3>
+          <div class="comandos-grid">
+            <button class="btn-cmd btn-cima" onclick="addComando('cima')">⬆️</button>
+            <button class="btn-cmd btn-direita" onclick="addComando('direita')">➡️</button>
+            <button class="btn-cmd btn-baixo" onclick="addComando('baixo')">⬇️</button>
+            <button class="btn-cmd btn-esquerda" onclick="addComando('esquerda')">⬅️</button>
+          </div>
+        </div>
+
+        <!-- Área de Ações -->
+        <div class="acoes-container">
+          <button class="btn-acao btn-desfazer" onclick="desfazer()">
+            <span class="material-icons">undo</span> Desfazer
+          </button>
+          <button class="btn-acao btn-executar" id="btn-executar" onclick="executar()">
+            <span class="material-icons">play_arrow</span> Executar
+          </button>
+        </div>
+
+        <p id="feedback"></p>
+      </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="app-footer">
+      <div class="mascote-container">
+        <div class="mascote-img">🤖</div>
+        <div class="dica-box">
+          Pense bem na ordem dos comandos antes de executar!
+        </div>
+      </div>
+      
+      <div class="progresso-container" id="fase-progresso">
+        <!-- Preenchido pelo JS -->
+      </div>
+      
+      <button class="btn-icon btn-settings" onclick="alert('Configurações abertas')">
+        <span class="material-icons">settings</span>
+      </button>
+    </footer>
+
+    <!-- Modal de Parabéns -->
+    <div id="modal-parabens">
+      <h2>🌟 PARABÉNS! 🌟</h2>
+      <button onclick="proximaFase()">PRÓXIMA FASE ➡️</button>
+    </div>
+
   </div>
 
-  <div id="sequencia"></div>
-  <p id="feedback"></p>
-
-</div>
-
-<script src="script2.js"></script>
+  <script src="scripts/script2.js"></script>
 </body>
+
 </html>
